@@ -2,9 +2,9 @@
 
 /*
   Plugin Name: Tickera - Event Name on the Cart and Checkout Page
-  Plugin URI: http://webdevs.com/
+  Plugin URI: http://tanin.webdevs.com/
   Description: Adds event name on the cart page and Checkout page.
-  Author: webdevs.com
+  Author: Tanin
   Author URI: 
   Version: 1.0.1
   TextDomain: wd_tc
@@ -36,6 +36,19 @@ if (class_exists('TC_Event')) {
 
     ?>
         <p class="event-name"><strong>Event:</strong> <?php echo $event->details->post_title; ?></p>
-<?php
+    <?php
     }
+
+    function action_woocommerce_order_item_meta_start($item_id, $item, $order)
+    {
+        $product_id = $item->get_product_id();
+        $event_id  = get_post_meta($product_id, '_event_name', true);
+        $event  = new TC_Event($event_id);
+
+    ?>
+        <br /><strong>Event:</strong> <?php echo $event->details->post_title; ?>
+<?php
+    };
+
+    add_action('woocommerce_order_item_meta_start', 'action_woocommerce_order_item_meta_start', 10, 3);
 }
